@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DataModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="DataModelStoreContainer">
+    <EntitySet Name="InformationSystems" EntityType="DataModel.Store.InformationSystems" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DataTasks" EntityType="DataModel.Store.DataTasks" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DataEvents" EntityType="DataModel.Store.DataEvents" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="TaskEvent" Association="DataModel.Store.TaskEvent">
+      <End Role="Task" EntitySet="DataTasks" />
+      <End Role="Event" EntitySet="DataEvents" />
+    </AssociationSet>
+    <AssociationSet Name="InformationSystemTask" Association="DataModel.Store.InformationSystemTask">
+      <End Role="InformationSystem" EntitySet="InformationSystems" />
+      <End Role="Task" EntitySet="DataTasks" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="InformationSystems">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ISType" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Address" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="DataTasks">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TaskType" Type="tinyint" Nullable="false" />
+    <Property Name="Source" Type="tinyint" Nullable="false" />
+    <Property Name="Data" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Destination" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="InformationSystem_Id" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="DataEvents">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EventDateTime" Type="datetime" Nullable="false" />
+    <Property Name="TaskState" Type="tinyint" Nullable="false" />
+    <Property Name="Task_Id" Type="int" Nullable="true" />
+  </EntityType>
+  <Association Name="TaskEvent">
+    <End Role="Task" Type="DataModel.Store.DataTasks" Multiplicity="0..1" />
+    <End Role="Event" Type="DataModel.Store.DataEvents" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Task">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Event">
+        <PropertyRef Name="Task_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="InformationSystemTask">
+    <End Role="InformationSystem" Type="DataModel.Store.InformationSystems" Multiplicity="0..1" />
+    <End Role="Task" Type="DataModel.Store.DataTasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="InformationSystem">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Task">
+        <PropertyRef Name="InformationSystem_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="DataModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="DataModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="InformationSystems" EntityType="DataModel.InformationSystem" />
+          <EntitySet Name="DataTasks" EntityType="DataModel.DataTask" />
+          <EntitySet Name="DataEvents" EntityType="DataModel.DataEvent" />
+          <AssociationSet Name="TaskEvent" Association="DataModel.TaskEvent">
+            <End Role="Task" EntitySet="DataTasks" />
+            <End Role="Event" EntitySet="DataEvents" />
+          </AssociationSet>
+          <AssociationSet Name="InformationSystemTask" Association="DataModel.InformationSystemTask">
+            <End Role="InformationSystem" EntitySet="InformationSystems" />
+            <End Role="Task" EntitySet="DataTasks" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="InformationSystem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="ISType" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Task" Relationship="DataModel.InformationSystemTask" FromRole="InformationSystem" ToRole="Task" />
+        </EntityType>
+        <EnumType Name="ISTypes" UnderlyingType="Byte">
+          <Member Name="DirectoryService" Value="100" />
+          <Member Name="Mailserver" Value="101" />
+          <Member Name="Mailrelay" Value="102" />
+          <Member Name="ERP" Value="103" />
+          <Member Name="Docflow" Value="104" />
+          <Member Name="Fileserver" Value="105" />
+          <Member Name="Portal" Value="106" />
+        </EnumType>
+        <EnumType Name="TaskTypes" UnderlyingType="Byte" >
+          <Member Name="CreateUser" Value="201" />
+          <Member Name="DeleteUser" Value="202" />
+          <Member Name="DenyAccess" Value="203" />
+          <Member Name="PermitAccess" Value="204" />
+          <Member Name="BlockUser" Value="205" />
+        </EnumType>
+        <EnumType Name="TaskStates" UnderlyingType="Byte">
+          <Member Name="Created" Value="001" />
+          <Member Name="InProcessing" Value="002" />
+          <Member Name="Completed" Value="003" />
+          <Member Name="Terminated" Value="004" />
+        </EnumType>
+        <EntityType Name="DataTask">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TaskType" Type="DataModel.TaskTypes" Nullable="false" />
+          <Property Name="Source" Type="DataModel.ISTypes" Nullable="false" />
+          <Property Name="Data" Type="String" Nullable="false" />
+          <NavigationProperty Name="Event" Relationship="DataModel.TaskEvent" FromRole="Task" ToRole="Event" />
+          <NavigationProperty Name="InformationSystem" Relationship="DataModel.InformationSystemTask" FromRole="Task" ToRole="InformationSystem" />
+          <Property Name="Destination" Type="String" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DataEvent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventDateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TaskState" Type="DataModel.TaskStates" Nullable="false" />
+          <NavigationProperty Name="Task" Relationship="DataModel.TaskEvent" FromRole="Event" ToRole="Task" />
+        </EntityType>
+        <Association Name="TaskEvent">
+          <End Type="DataModel.DataTask" Role="Task" Multiplicity="0..1" />
+          <End Type="DataModel.DataEvent" Role="Event" Multiplicity="*" />
+        </Association>
+        <Association Name="InformationSystemTask">
+          <End Type="DataModel.InformationSystem" Role="InformationSystem" Multiplicity="0..1" />
+          <End Type="DataModel.DataTask" Role="Task" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="DataModelStoreContainer" CdmEntityContainer="DataModelContainer">
+    <EntitySetMapping Name="InformationSystems">
+      <EntityTypeMapping TypeName="IsTypeOf(DataModel.InformationSystem)">
+        <MappingFragment StoreEntitySet="InformationSystems">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ISType" ColumnName="ISType" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DataTasks">
+      <EntityTypeMapping TypeName="IsTypeOf(DataModel.DataTask)">
+        <MappingFragment StoreEntitySet="DataTasks">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TaskType" ColumnName="TaskType" />
+          <ScalarProperty Name="Source" ColumnName="Source" />
+          <ScalarProperty Name="Data" ColumnName="Data" />
+          <ScalarProperty Name="Destination" ColumnName="Destination" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DataEvents">
+      <EntityTypeMapping TypeName="IsTypeOf(DataModel.DataEvent)">
+        <MappingFragment StoreEntitySet="DataEvents">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="EventDateTime" ColumnName="EventDateTime" />
+          <ScalarProperty Name="TaskState" ColumnName="TaskState" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="TaskEvent" TypeName="DataModel.TaskEvent" StoreEntitySet="DataEvents">
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="Task_Id" />
+      </EndProperty>
+      <EndProperty Name="Event">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="Task_Id" IsNull="false" />
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="InformationSystemTask" TypeName="DataModel.InformationSystemTask" StoreEntitySet="DataTasks">
+      <EndProperty Name="InformationSystem">
+        <ScalarProperty Name="Id" ColumnName="InformationSystem_Id" />
+      </EndProperty>
+      <EndProperty Name="Task">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+      <Condition ColumnName="InformationSystem_Id" IsNull="false" />
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
